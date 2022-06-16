@@ -3,9 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView, DeleteView, ListView
-
-from .cart import Cart
-from .forms import CartAddProductForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from mybakery.models import Product
 from .models import Order
 
@@ -38,10 +36,13 @@ from .models import Order
 #                                                                    'update': True})
 #     return render(request, 'cart/detail.html', {'cart': cart})
 #
-class UsersCart(ListView):
-    model = Order
+class UsersCart(LoginRequiredMixin, ListView):
+    model = Product
     template_name = 'cart/detail.html'
     context_object_name = 'order'
+
+
+# class NewOrder():
 
 
 # class Product(LoginRequiredMixin, CreateView):
