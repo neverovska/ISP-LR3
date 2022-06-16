@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+# import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +28,8 @@ DEBUG = int(os.environ.get("DEBUG", default=0))
 # 'DJANGO_ALLOWED_HOSTS' должен быть в виде одной строки с хостами разделенными символом пробела
 # Для примера: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
-
+#ALLOWED_HOSTS = ['198.211.99.20', 'localhost', '127.0.0.1', '0.0.0.0:8000', 'olxbestclone.herokuapp.com']
+#CSRF_TRUSTED_ORIGINS = ['https://olxbestclone.herokuapp.com']
 
 # Application definition
 
@@ -89,6 +91,11 @@ DATABASES = {
     }
 }
 
+# DATABASES = {}
+#
+# DATABASES['default'] = dj_database_url.config(
+#     default='postgres://kwwzkwhwoijprj:779689e5e403f5c15de3ceeff6dd850e302427d1fea501775ea2e7ccfa3e861a@ec2-52-44-13-158.compute-1.amazonaws.com:5432/d4gdjr0il3dsbt')
+
 
 
 # Password validation
@@ -109,6 +116,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'main_format': {
+            'format': '{asctime} - {levelname} - {module} - {filename} - {message}',
+            'style': '{',
+        }
+    },
+
+    'handlers': {
+        'file': {
+            'class': 'logging.FileHandler',
+            'formatter': 'main_format',
+            'filename': 'information.log',
+        },
+    },
+
+    'loggers': {
+        'main': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

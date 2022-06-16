@@ -13,28 +13,22 @@
     </thead>
     <tbody>
       {% for one in order %}
-        {% with product=one.product %}
           <tr>
             <td>
-              <a href="{{ product.get_absolute_url }}">
-                <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}">
-              </a>
+
+                <img src="{% if one.image %}{{ one.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}">
+
             </td>
-            <td>{{ product.name }}</td>
+            <td>{{ one.name }}</td>
 
             <td>
               {{ one.quantity }}
             </td>
-            <td class="num">${{ one.price }}</td>
+            <td class="num">{{ one.price }}р.</td>
 
           </tr>
-        {% endwith %}
       {% endfor %}
-      <tr class="total">
-        <td>Всего</td>
-        <td colspan="4"></td>
 
-      </tr>
     </tbody>
   </table>
   <p class="text-right">

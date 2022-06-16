@@ -239,6 +239,45 @@ ALTER SEQUENCE public.auth_user_user_permissions_id_seq OWNED BY public.auth_use
 
 
 --
+-- Name: cart_order; Type: TABLE; Schema: public; Owner: hello_django
+--
+
+CREATE TABLE public.cart_order (
+    id integer NOT NULL,
+    owner_name character varying(100) NOT NULL,
+    item_id numeric(5,0) NOT NULL,
+    quantity numeric(5,0) NOT NULL,
+    image character varying(100) NOT NULL,
+    name character varying(100) NOT NULL,
+    price numeric(5,1) NOT NULL
+);
+
+
+ALTER TABLE public.cart_order OWNER TO hello_django;
+
+--
+-- Name: cart_order_id_seq; Type: SEQUENCE; Schema: public; Owner: hello_django
+--
+
+CREATE SEQUENCE public.cart_order_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cart_order_id_seq OWNER TO hello_django;
+
+--
+-- Name: cart_order_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hello_django
+--
+
+ALTER SEQUENCE public.cart_order_id_seq OWNED BY public.cart_order.id;
+
+
+--
 -- Name: django_admin_log; Type: TABLE; Schema: public; Owner: hello_django
 --
 
@@ -410,8 +449,7 @@ CREATE TABLE public.mybakery_product (
     price numeric(5,1) NOT NULL,
     weight numeric(5,0) NOT NULL,
     calories numeric(5,1) NOT NULL,
-    composition text NOT NULL,
-    category_id integer NOT NULL
+    composition text NOT NULL
 );
 
 
@@ -482,6 +520,13 @@ ALTER TABLE ONLY public.auth_user_user_permissions ALTER COLUMN id SET DEFAULT n
 
 
 --
+-- Name: cart_order id; Type: DEFAULT; Schema: public; Owner: hello_django
+--
+
+ALTER TABLE ONLY public.cart_order ALTER COLUMN id SET DEFAULT nextval('public.cart_order_id_seq'::regclass);
+
+
+--
 -- Name: django_admin_log id; Type: DEFAULT; Schema: public; Owner: hello_django
 --
 
@@ -537,10 +582,10 @@ COPY public.auth_group_permissions (id, group_id, permission_id) FROM stdin;
 --
 
 COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
-1	Can add Категория	1	add_category
-2	Can change Категория	1	change_category
-3	Can delete Категория	1	delete_category
-4	Can view Категория	1	view_category
+1	Can add Заказ	1	add_order
+2	Can change Заказ	1	change_order
+3	Can delete Заказ	1	delete_order
+4	Can view Заказ	1	view_order
 5	Can add Изделие	2	add_product
 6	Can change Изделие	2	change_product
 7	Can delete Изделие	2	delete_product
@@ -577,7 +622,7 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 --
 
 COPY public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
-1	pbkdf2_sha256$180000$ZZnc7NXSRJRH$CwGBci3SAy2H/vJX2rqvSSEPRp1zqBDDsQna4qqVM8k=	2022-06-14 20:22:02.973927+00	t	alcabens				t	t	2022-06-14 20:21:44.342877+00
+1	pbkdf2_sha256$180000$6GBcJXy8D8gu$/njsLFyv+udcmXXLoPiFCxptmyfeWIV3x/efU6stDNc=	2022-06-16 15:52:49.168627+00	t	alcabens				t	t	2022-06-16 15:51:45.484066+00
 \.
 
 
@@ -598,12 +643,25 @@ COPY public.auth_user_user_permissions (id, user_id, permission_id) FROM stdin;
 
 
 --
+-- Data for Name: cart_order; Type: TABLE DATA; Schema: public; Owner: hello_django
+--
+
+COPY public.cart_order (id, owner_name, item_id, quantity, image, name, price) FROM stdin;
+1	alcabens	3	1	product/2022/06/16/dv5a3948_400x500_e76.jpg	Хлеб из твердых сортов пшеницы с кунжутом	7.0
+\.
+
+
+--
 -- Data for Name: django_admin_log; Type: TABLE DATA; Schema: public; Owner: hello_django
 --
 
 COPY public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) FROM stdin;
-1	2022-06-14 20:23:00.768181+00	1	Ремесленный хлеб	1	[{"added": {}}]	1	1
-2	2022-06-14 20:24:29.331536+00	1	Хлеб "Французский деревенский"	1	[{"added": {}}]	2	1
+1	2022-06-16 15:53:46.862217+00	1	Хлеб «Французский деревенский»	1	[{"added": {}}]	2	1
+2	2022-06-16 15:55:31.486067+00	2	Хлеб «Три семечки»	1	[{"added": {}}]	2	1
+3	2022-06-16 15:57:51.681089+00	3	Хлеб из твердых сортов пшеницы с кунжутом	1	[{"added": {}}]	2	1
+4	2022-06-16 15:58:52.602174+00	4	Хлеб «С вялеными томатами»	1	[{"added": {}}]	2	1
+5	2022-06-16 15:59:51.127307+00	5	Французская булка	1	[{"added": {}}]	2	1
+6	2022-06-16 16:00:31.615546+00	5	Французская булка	3		2	1
 \.
 
 
@@ -612,7 +670,7 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 --
 
 COPY public.django_content_type (id, app_label, model) FROM stdin;
-1	mybakery	category
+1	cart	order
 2	mybakery	product
 3	admin	logentry
 4	auth	permission
@@ -628,24 +686,27 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2022-06-14 18:53:34.378987+00
-2	auth	0001_initial	2022-06-14 18:53:34.430162+00
-3	admin	0001_initial	2022-06-14 18:53:34.49282+00
-4	admin	0002_logentry_remove_auto_add	2022-06-14 18:53:34.516398+00
-5	admin	0003_logentry_add_action_flag_choices	2022-06-14 18:53:34.525216+00
-6	contenttypes	0002_remove_content_type_name	2022-06-14 18:53:34.539611+00
-7	auth	0002_alter_permission_name_max_length	2022-06-14 18:53:34.544558+00
-8	auth	0003_alter_user_email_max_length	2022-06-14 18:53:34.552531+00
-9	auth	0004_alter_user_username_opts	2022-06-14 18:53:34.559064+00
-10	auth	0005_alter_user_last_login_null	2022-06-14 18:53:34.566672+00
-11	auth	0006_require_contenttypes_0002	2022-06-14 18:53:34.569896+00
-12	auth	0007_alter_validators_add_error_messages	2022-06-14 18:53:34.576853+00
-13	auth	0008_alter_user_username_max_length	2022-06-14 18:53:34.587959+00
-14	auth	0009_alter_user_last_name_max_length	2022-06-14 18:53:34.595313+00
-15	auth	0010_alter_group_name_max_length	2022-06-14 18:53:34.603475+00
-16	auth	0011_update_proxy_permissions	2022-06-14 18:53:34.610241+00
-17	sessions	0001_initial	2022-06-14 18:53:34.61913+00
-18	mybakery	0001_initial	2022-06-14 18:58:08.358393+00
+1	contenttypes	0001_initial	2022-06-16 06:21:08.511413+00
+2	auth	0001_initial	2022-06-16 06:21:08.568326+00
+3	admin	0001_initial	2022-06-16 06:21:08.619339+00
+4	admin	0002_logentry_remove_auto_add	2022-06-16 06:21:08.632594+00
+5	admin	0003_logentry_add_action_flag_choices	2022-06-16 06:21:08.638538+00
+6	contenttypes	0002_remove_content_type_name	2022-06-16 06:21:08.651911+00
+7	auth	0002_alter_permission_name_max_length	2022-06-16 06:21:08.656363+00
+8	auth	0003_alter_user_email_max_length	2022-06-16 06:21:08.663602+00
+9	auth	0004_alter_user_username_opts	2022-06-16 06:21:08.669806+00
+10	auth	0005_alter_user_last_login_null	2022-06-16 06:21:08.676002+00
+11	auth	0006_require_contenttypes_0002	2022-06-16 06:21:08.677972+00
+12	auth	0007_alter_validators_add_error_messages	2022-06-16 06:21:08.683988+00
+13	auth	0008_alter_user_username_max_length	2022-06-16 06:21:08.692867+00
+14	auth	0009_alter_user_last_name_max_length	2022-06-16 06:21:08.699322+00
+15	auth	0010_alter_group_name_max_length	2022-06-16 06:21:08.705634+00
+16	auth	0011_update_proxy_permissions	2022-06-16 06:21:08.713917+00
+17	mybakery	0001_initial	2022-06-16 06:21:08.730673+00
+18	mybakery	0002_auto_20220615_0840	2022-06-16 06:21:08.755867+00
+19	sessions	0001_initial	2022-06-16 06:21:08.764246+00
+21	cart	0001_initial	2022-06-16 15:12:44.417596+00
+22	cart	0002_auto_20220616_1524	2022-06-16 15:24:11.875369+00
 \.
 
 
@@ -654,7 +715,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 --
 
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
-b2t1csb2b59gm3pr29prf71ed1vsej1z	ZjQ1ZTRkMTRkYTk3OTMyMDQwZmQ3ZTNiZDJkMzM4ZTg0MGQ2ZThkYTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJhYjA0YjJmNTQ5OWQ2MDdmMGMzZTU2N2Y0YzMzZDMxMWZhOWI5NzVlIn0=	2022-06-28 20:22:02.976164+00
+mlii9f5e98cox9xss3n2j2f4js3cupnh	ZWM2M2ZlZTQyN2E3ZWNiNTQyMWNhN2YxMDUyYzUwMmQxMDVmNmUzODp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiIwMTY3ZTAwM2ExNzIzMWRhOTA0NTJjMTllMzIyMTAwYTVkZTc0MzZiIn0=	2022-06-30 15:52:49.171245+00
 \.
 
 
@@ -671,8 +732,11 @@ COPY public.mybakery_category (id, name, slug) FROM stdin;
 -- Data for Name: mybakery_product; Type: TABLE DATA; Schema: public; Owner: hello_django
 --
 
-COPY public.mybakery_product (id, name, slug, image, price, weight, calories, composition, category_id) FROM stdin;
-1	Хлеб "Французский деревенский"	hleb-francuzskij-derevenskij	product/2022/06/14/dv5a3987_400x500_e76.jpg	4.5	430	261.0	Mука пшеничная в/с, вода питьевая, закваска (вода питьевая, мука пшеничная в/с), мука пшеничная цельнозерновая свежесмолотая, мука ржаная цельнозерновая свежесмолотая, соль морская пищевая.	1
+COPY public.mybakery_product (id, name, slug, image, price, weight, calories, composition) FROM stdin;
+1	Хлеб «Французский деревенский»	hleb-francuzskij-derevenskij	product/2022/06/16/dv5a3987_400x500_e76_vvvvrgu.jpg	4.5	230	261.0	Mука пшеничная в/с, вода питьевая, закваска (вода питьевая, мука пшеничная в/с), мука пшеничная цельнозерновая свежесмолотая, мука ржаная цельнозерновая свежесмолотая, соль морская пищевая.
+2	Хлеб «Три семечки»	hleb-tri-semechki	product/2022/06/16/dv5a4050_400x500_e76.jpg	5.6	430	260.0	Mука пшеничная в/с, мука пшеничная цельнозерновая свежесмолотая, закваска (вода питьевая, мука пшеничная в/с), вода питьевая, ядро подсолнечника, семена тыквы, семена льна, семена кунжута, соль морская пищевая.
+3	Хлеб из твердых сортов пшеницы с кунжутом	hleb-iz-tverdyh-sortov-pshenicy-s-kunzhutom	product/2022/06/16/dv5a3948_400x500_e76.jpg	7.0	430	270.0	Mука пшеничная «Semola» (из твердых сортов пшеницы), мука пшеничная в/с, закваска (вода питьевая, мука пшеничная в/с), семена кунжута, соль морская пищевая.
+4	Хлеб «С вялеными томатами»	hleb-s-vyalenymi-tomatami	product/2022/06/16/dv5a4020_400x500_e76.jpg	6.5	430	276.0	Mука пшеничная в/с, закваска (вода питьевая, мука пшеничная в/с), мука пшеничная цельнозерновая свежесмолотая, вода питьевая, вяленые томаты, тимьян, базилик, чеснок, оливковое масло, соль морская пищевая.
 \.
 
 
@@ -719,10 +783,17 @@ SELECT pg_catalog.setval('public.auth_user_user_permissions_id_seq', 1, false);
 
 
 --
+-- Name: cart_order_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hello_django
+--
+
+SELECT pg_catalog.setval('public.cart_order_id_seq', 1, true);
+
+
+--
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hello_django
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 2, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 6, true);
 
 
 --
@@ -736,7 +807,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 8, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hello_django
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 18, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 22, true);
 
 
 --
@@ -750,7 +821,7 @@ SELECT pg_catalog.setval('public.mybakery_category_id_seq', 1, true);
 -- Name: mybakery_product_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hello_django
 --
 
-SELECT pg_catalog.setval('public.mybakery_product_id_seq', 1, true);
+SELECT pg_catalog.setval('public.mybakery_product_id_seq', 5, true);
 
 
 --
@@ -847,6 +918,14 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 ALTER TABLE ONLY public.auth_user
     ADD CONSTRAINT auth_user_username_key UNIQUE (username);
+
+
+--
+-- Name: cart_order cart_order_pkey; Type: CONSTRAINT; Schema: public; Owner: hello_django
+--
+
+ALTER TABLE ONLY public.cart_order
+    ADD CONSTRAINT cart_order_pkey PRIMARY KEY (id);
 
 
 --
@@ -985,6 +1064,34 @@ CREATE INDEX auth_user_username_6821ab7c_like ON public.auth_user USING btree (u
 
 
 --
+-- Name: cart_order_name_84a807e4; Type: INDEX; Schema: public; Owner: hello_django
+--
+
+CREATE INDEX cart_order_name_84a807e4 ON public.cart_order USING btree (name);
+
+
+--
+-- Name: cart_order_name_84a807e4_like; Type: INDEX; Schema: public; Owner: hello_django
+--
+
+CREATE INDEX cart_order_name_84a807e4_like ON public.cart_order USING btree (name varchar_pattern_ops);
+
+
+--
+-- Name: cart_order_owner_name_6cd7ccc9; Type: INDEX; Schema: public; Owner: hello_django
+--
+
+CREATE INDEX cart_order_owner_name_6cd7ccc9 ON public.cart_order USING btree (owner_name);
+
+
+--
+-- Name: cart_order_owner_name_6cd7ccc9_like; Type: INDEX; Schema: public; Owner: hello_django
+--
+
+CREATE INDEX cart_order_owner_name_6cd7ccc9_like ON public.cart_order USING btree (owner_name varchar_pattern_ops);
+
+
+--
 -- Name: django_admin_log_content_type_id_c4bce8eb; Type: INDEX; Schema: public; Owner: hello_django
 --
 
@@ -1031,13 +1138,6 @@ CREATE INDEX mybakery_category_name_bccdf971_like ON public.mybakery_category US
 --
 
 CREATE INDEX mybakery_category_slug_fe01cc01_like ON public.mybakery_category USING btree (slug varchar_pattern_ops);
-
-
---
--- Name: mybakery_product_category_id_2335fe73; Type: INDEX; Schema: public; Owner: hello_django
---
-
-CREATE INDEX mybakery_product_category_id_2335fe73 ON public.mybakery_product USING btree (category_id);
 
 
 --
@@ -1131,14 +1231,6 @@ ALTER TABLE ONLY public.django_admin_log
 
 ALTER TABLE ONLY public.django_admin_log
     ADD CONSTRAINT django_admin_log_user_id_c564eba6_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES public.auth_user(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: mybakery_product mybakery_product_category_id_2335fe73_fk_mybakery_category_id; Type: FK CONSTRAINT; Schema: public; Owner: hello_django
---
-
-ALTER TABLE ONLY public.mybakery_product
-    ADD CONSTRAINT mybakery_product_category_id_2335fe73_fk_mybakery_category_id FOREIGN KEY (category_id) REFERENCES public.mybakery_category(id) DEFERRABLE INITIALLY DEFERRED;
 
 
 --

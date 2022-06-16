@@ -9,7 +9,7 @@
 {% static 'img/no_image.png' %}{% endif %}">
     <h1>{{ product.name }}</h1>
     <p class="price">{{ product.price }} р.</p>
-    <form>
+    <form action="{% url 'cart:cart_add' product.id %}">
         <input type="submit" value="В корзину">
     </form>
 
