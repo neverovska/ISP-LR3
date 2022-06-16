@@ -1,17 +1,22 @@
 version: '3.7'
 services:
+
   web:
-    build: ./bakery
+    build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./bakery/:/usr/src/bakery/
+      - ./:/usr/src/bakery
     ports:
-      - 8000:8000
+      - '8000:8000'
     env_file:
-      - ./.env.dev
+      - .env.dev
     depends_on:
       - db
+    links:
+      - db
+
   db:
+    container_name: database
     image: postgres:12.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/

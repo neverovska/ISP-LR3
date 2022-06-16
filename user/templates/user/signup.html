@@ -1,0 +1,36 @@
+{% extends 'bakery/base.html'%}
+
+
+{% block title %}
+Зарегистрироваться
+{% endblock %}
+
+
+{% block content %}
+<div class="container h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-9 col-lg-7 col-xl-7">
+              <div class="card" style="border-radius: 15px;">
+                <div class="card bg-dark p-5">
+                  <h2 class="text-white text-center mb-5">Регистрация</h2>
+
+                  <form method="post">
+                      {% csrf_token %}
+                      <label class="form-label text-white" for="form3Example1cg" style="margin-left: 0px;">Имя</label>
+                      <input type="text"  name="username" id="form3Example1cg" class="form-control form-control-lg"><br>
+                      <label class="form-label text-white" for="form3Example3cg" style="margin-left: 0px;">Почта</label>
+                      <input type="email" name="email" id="form3Example3cg" class="form-control form-control-lg"><br>
+                      <label class="form-label text-white" for="form3Example4cg" style="margin-left: 0px;">Пароль</label>
+                      <input type="password" name="password" id="form3Example4cg" class="form-control form-control-lg"><br>
+                      <label class="form-label text-white" for="form3Example4cdg" style="margin-left: 0px;">Повторите пароль</label>
+                      <input type="password" name="password2"  id="form3Example4cdg" class="form-control form-control-lg"><br>
+
+                      <input type="submit" class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" value="Регистрация">
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+{% endblock %}

@@ -1,12 +1,12 @@
 from django.urls import path
 from . import views
+from .views import ProductList, ViewProduct
 
 app_name = 'mybakery'
 
 urlpatterns = [
-    path('', views.product_list, name='product_list'),
-    path('<slug:category_slug>/', views.product_list,
-         name='prouct_list_by_category'),
-    path('<int:id>/<slug:slug>', views.product_detail,
+    path('', ProductList.as_view(), name='product_list'),
+
+    path('<int:id>/<slug:slug>', ViewProduct.as_view(),
          name='product_detail')
 ]
